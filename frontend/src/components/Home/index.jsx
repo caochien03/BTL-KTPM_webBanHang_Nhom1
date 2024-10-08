@@ -1,10 +1,29 @@
-import { FilterTwoTone, ReloadOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
-import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin, Empty, Breadcrumb } from 'antd';
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useOutletContext } from 'react-router-dom';
-import { callFetchCategory, callFetchListBook } from '../../services/api';
-import './home.scss';
-import MobileFilter from './MobileFilter';
+import {
+    FilterTwoTone,
+    ReloadOutlined,
+    HomeOutlined,
+    UserOutlined,
+} from "@ant-design/icons";
+import {
+    Row,
+    Col,
+    Form,
+    Checkbox,
+    Divider,
+    InputNumber,
+    Button,
+    Rate,
+    Tabs,
+    Pagination,
+    Spin,
+    Empty,
+    Breadcrumb,
+} from "antd";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { callFetchCategory, callFetchListBook } from "../../services/api";
+import "./home.scss";
+import MobileFilter from "./MobileFilter";
 const Home = () => {
     const [searchTerm, setSearchTerm] = useOutletContext();
 
@@ -28,12 +47,12 @@ const Home = () => {
         const initCategory = async () => {
             const res = await callFetchCategory();
             if (res && res.data) {
-                const d = res.data.map(item => {
-                    return { label: item, value: item }
-                })
+                const d = res.data.map((item) => {
+                    return { label: item, value: item };
+                });
                 setListCategory(d);
             }
-        }
+        };
         initCategory();
     }, []);
 
@@ -42,7 +61,7 @@ const Home = () => {
     }, [current, pageSize, filter, sortQuery, searchTerm]);
 
     const fetchBook = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         let query = `current=${current}&pageSize=${pageSize}`;
         if (filter) {
             query += `&${filter}`;
@@ -58,21 +77,20 @@ const Home = () => {
         const res = await callFetchListBook(query);
         if (res && res.data) {
             setListBook(res.data.result);
-            setTotal(res.data.meta.total)
+            setTotal(res.data.meta.total);
         }
-        setIsLoading(false)
-    }
+        setIsLoading(false);
+    };
 
     const handleOnchangePage = (pagination) => {
         if (pagination && pagination.current !== current) {
-            setCurrent(pagination.current)
+            setCurrent(pagination.current);
         }
         if (pagination && pagination.pageSize !== pageSize) {
-            setPageSize(pagination.pageSize)
+            setPageSize(pagination.pageSize);
             setCurrent(1);
         }
-
-    }
+    };
 
     const handleChangeFilter = (changedValues, values) => {
         // console.log(">>> check changedValues, values: ", changedValues, values)
@@ -81,15 +99,14 @@ const Home = () => {
         if (changedValues.category) {
             const cate = values.category;
             if (cate && cate.length > 0) {
-                const f = cate.join(',');
-                setFilter(`category=${f}`)
+                const f = cate.join(",");
+                setFilter(`category=${f}`);
             } else {
                 //reset data -> fetch all
-                setFilter('');
+                setFilter("");
             }
         }
-
-    }
+    };
 
     const onFinish = (values) => {
         // console.log('>> check values: ', values)
@@ -97,12 +114,12 @@ const Home = () => {
         if (values?.range?.from >= 0 && values?.range?.to >= 0) {
             let f = `price>=${values?.range?.from}&price<=${values?.range?.to}`;
             if (values?.category?.length) {
-                const cate = values?.category?.join(',');
-                f += `&category=${cate}`
+                const cate = values?.category?.join(",");
+                f += `&category=${cate}`;
             }
             setFilter(f);
         }
-    }
+    };
 
     const items = [
         {
@@ -111,17 +128,17 @@ const Home = () => {
             children: <></>,
         },
         {
-            key: 'sort=-updatedAt',
+            key: "sort=-updatedAt",
             label: `Hàng Mới`,
             children: <></>,
         },
         {
-            key: 'sort=price',
+            key: "sort=price",
             label: `Giá Thấp Đến Cao`,
             children: <></>,
         },
         {
-            key: 'sort=-price',
+            key: "sort=-price",
             label: `Giá Cao Đến Thấp`,
             children: <></>,
         },
@@ -146,40 +163,44 @@ const Home = () => {
         str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng
         str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
         return str;
-    }
+    };
 
     const convertSlug = (str) => {
         str = nonAccentVietnamese(str);
-        str = str.replace(/^\s+|\s+$/g, ''); // trim
+        str = str.replace(/^\s+|\s+$/g, ""); // trim
         str = str.toLowerCase();
 
         // remove accents, swap ñ for n, etc
-        const from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆĞÍÌÎÏİŇÑÓÖÒÔÕØŘŔŠŞŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇğíìîïıňñóöòôõøðřŕšşťúůüùûýÿžþÞĐđßÆa·/_,:;";
-        const to = "AAAAAACCCDEEEEEEEEGIIIIINNOOOOOORRSSTUUUUUYYZaaaaaacccdeeeeeeeegiiiiinnooooooorrsstuuuuuyyzbBDdBAa------";
+        const from =
+            "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆĞÍÌÎÏİŇÑÓÖÒÔÕØŘŔŠŞŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇğíìîïıňñóöòôõøðřŕšşťúůüùûýÿžþÞĐđßÆa·/_,:;";
+        const to =
+            "AAAAAACCCDEEEEEEEEGIIIIINNOOOOOORRSSTUUUUUYYZaaaaaacccdeeeeeeeegiiiiinnooooooorrsstuuuuuyyzbBDdBAa------";
         for (let i = 0, l = from.length; i < l; i++) {
-            str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+            str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
         }
 
-        str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-            .replace(/\s+/g, '-') // collapse whitespace and replace by -
-            .replace(/-+/g, '-'); // collapse dashes
+        str = str
+            .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
+            .replace(/\s+/g, "-") // collapse whitespace and replace by -
+            .replace(/-+/g, "-"); // collapse dashes
 
         return str;
-    }
+    };
 
     const handleRedirectBook = (book) => {
         const slug = convertSlug(book.mainText);
-        navigate(`/book/${slug}?id=${book._id}`)
-    }
+        navigate(`/book/${slug}?id=${book._id}`);
+    };
 
     return (
         <>
-
-
-            <div style={{ background: '#efefef', padding: "20px 0" }}>
-                <div className="homepage-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
+            <div style={{ background: "#efefef", padding: "20px 0" }}>
+                <div
+                    className="homepage-container"
+                    style={{ maxWidth: 1440, margin: "0 auto" }}
+                >
                     <Breadcrumb
-                        style={{ margin: '5px 0' }}
+                        style={{ margin: "5px 0" }}
                         items={[
                             {
                                 // href: '#',
@@ -187,32 +208,55 @@ const Home = () => {
                             },
                             {
                                 title: (
-                                    <Link to={'/'}>
+                                    <Link to={"/"}>
                                         <span>Trang Chủ</span>
                                     </Link>
                                 ),
-                            }
+                            },
                         ]}
                     />
                     <Row gutter={[20, 20]}>
                         <Col md={4} sm={0} xs={0}>
-                            <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
-                                <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                                    <span> <FilterTwoTone />
-                                        <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
-                                    </span>
-                                    <ReloadOutlined title="Reset" onClick={() => {
-                                        form.resetFields();
-                                        setFilter('');
-                                        setSearchTerm('');
+                            <div
+                                style={{
+                                    padding: "20px",
+                                    background: "#fff",
+                                    borderRadius: 5,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
                                     }}
+                                >
+                                    <span>
+                                        {" "}
+                                        <FilterTwoTone />
+                                        <span style={{ fontWeight: 500 }}>
+                                            {" "}
+                                            Bộ lọc tìm kiếm
+                                        </span>
+                                    </span>
+                                    <ReloadOutlined
+                                        title="Reset"
+                                        onClick={() => {
+                                            form.resetFields();
+                                            setFilter("");
+                                            setSearchTerm("");
+                                        }}
                                     />
                                 </div>
                                 <Divider />
                                 <Form
                                     onFinish={onFinish}
                                     form={form}
-                                    onValuesChange={(changedValues, values) => handleChangeFilter(changedValues, values)}
+                                    onValuesChange={(changedValues, values) =>
+                                        handleChangeFilter(
+                                            changedValues,
+                                            values
+                                        )
+                                    }
                                 >
                                     <Form.Item
                                         name="category"
@@ -221,15 +265,28 @@ const Home = () => {
                                     >
                                         <Checkbox.Group>
                                             <Row>
-                                                {listCategory?.map((item, index) => {
-                                                    return (
-                                                        <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
-                                                            <Checkbox value={item.value} >
-                                                                {item.label}
-                                                            </Checkbox>
-                                                        </Col>
-                                                    )
-                                                })}
+                                                {listCategory?.map(
+                                                    (item, index) => {
+                                                        return (
+                                                            <Col
+                                                                span={24}
+                                                                key={`index-${index}`}
+                                                                style={{
+                                                                    padding:
+                                                                        "7px 0",
+                                                                }}
+                                                            >
+                                                                <Checkbox
+                                                                    value={
+                                                                        item.value
+                                                                    }
+                                                                >
+                                                                    {item.label}
+                                                                </Checkbox>
+                                                            </Col>
+                                                        );
+                                                    }
+                                                )}
                                             </Row>
                                         </Checkbox.Group>
                                     </Form.Item>
@@ -238,127 +295,201 @@ const Home = () => {
                                         label="Khoảng giá"
                                         labelCol={{ span: 24 }}
                                     >
-                                        <Row gutter={[10, 10]} style={{ width: "100%" }}>
+                                        <Row
+                                            gutter={[10, 10]}
+                                            style={{ width: "100%" }}
+                                        >
                                             <Col xl={11} md={24}>
-                                                <Form.Item name={["range", 'from']}>
+                                                <Form.Item
+                                                    name={["range", "from"]}
+                                                >
                                                     <InputNumber
-                                                        name='from'
+                                                        name="from"
                                                         min={0}
                                                         placeholder="đ TỪ"
-                                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        style={{ width: '100%' }}
+                                                        formatter={(value) =>
+                                                            `${value}`.replace(
+                                                                /\B(?=(\d{3})+(?!\d))/g,
+                                                                ","
+                                                            )
+                                                        }
+                                                        style={{
+                                                            width: "100%",
+                                                        }}
                                                     />
                                                 </Form.Item>
                                             </Col>
                                             <Col xl={2} md={0}>
-                                                <div > - </div>
+                                                <div> - </div>
                                             </Col>
                                             <Col xl={11} md={24}>
-                                                <Form.Item name={["range", 'to']}>
+                                                <Form.Item
+                                                    name={["range", "to"]}
+                                                >
                                                     <InputNumber
-                                                        name='to'
+                                                        name="to"
                                                         min={0}
                                                         placeholder="đ ĐẾN"
-                                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        style={{ width: '100%' }}
+                                                        formatter={(value) =>
+                                                            `${value}`.replace(
+                                                                /\B(?=(\d{3})+(?!\d))/g,
+                                                                ","
+                                                            )
+                                                        }
+                                                        style={{
+                                                            width: "100%",
+                                                        }}
                                                     />
                                                 </Form.Item>
                                             </Col>
                                         </Row>
                                         <div>
-                                            <Button onClick={() => form.submit()}
-                                                style={{ width: "100%" }} type='primary'>Áp dụng</Button>
+                                            <Button
+                                                onClick={() => form.submit()}
+                                                style={{ width: "100%" }}
+                                                type="primary"
+                                            >
+                                                Áp dụng
+                                            </Button>
                                         </div>
                                     </Form.Item>
                                     <Divider />
-                                    <Form.Item
-                                        label="Đánh giá"
-                                        labelCol={{ span: 24 }}
-                                    >
-                                        <div>
-                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text"></span>
-                                        </div>
-                                        <div>
-                                            <Rate value={4} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={3} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={2} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                    </Form.Item>
                                 </Form>
                             </div>
                         </Col>
 
-                        <Col md={20} xs={24} >
+                        <Col md={20} xs={24}>
                             <Spin spinning={isLoading} tip="Loading...">
-                                <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
-                                    <Row >
+                                <div
+                                    style={{
+                                        padding: "20px",
+                                        background: "#fff",
+                                        borderRadius: 5,
+                                    }}
+                                >
+                                    <Row>
                                         <Tabs
                                             defaultActiveKey="sort=-sold"
                                             items={items}
-                                            onChange={(value) => { setSortQuery(value) }}
+                                            onChange={(value) => {
+                                                setSortQuery(value);
+                                            }}
                                             style={{ overflowX: "auto" }}
                                         />
                                         <Col xs={24} md={0}>
-                                            <div style={{ marginBottom: 20 }} >
-                                                <span onClick={() => setShowMobileFilter(true)}>
+                                            <div style={{ marginBottom: 20 }}>
+                                                <span
+                                                    onClick={() =>
+                                                        setShowMobileFilter(
+                                                            true
+                                                        )
+                                                    }
+                                                >
                                                     <FilterTwoTone />
-                                                    <span style={{ fontWeight: 500 }}> Lọc</span>
+                                                    <span
+                                                        style={{
+                                                            fontWeight: 500,
+                                                        }}
+                                                    >
+                                                        {" "}
+                                                        Lọc
+                                                    </span>
                                                 </span>
-
                                             </div>
                                         </Col>
                                         <br />
                                     </Row>
-                                    <Row className='customize-row'>
+                                    <Row className="customize-row">
                                         {listBook?.map((item, index) => {
                                             return (
-                                                <div className="column" key={`book-${index}`} onClick={() => handleRedirectBook(item)}>
-                                                    <div className='wrapper'>
-                                                        <div className='thumbnail'>
-                                                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
+                                                <div
+                                                    className="column"
+                                                    key={`book-${index}`}
+                                                    onClick={() =>
+                                                        handleRedirectBook(item)
+                                                    }
+                                                >
+                                                    <div className="wrapper">
+                                                        <div className="thumbnail">
+                                                            <img
+                                                                src={`${
+                                                                    import.meta
+                                                                        .env
+                                                                        .VITE_BACKEND_URL
+                                                                }/images/book/${
+                                                                    item.thumbnail
+                                                                }`}
+                                                                alt="thumbnail book"
+                                                            />
                                                         </div>
-                                                        <div className='text' title={item.mainText}>{item.mainText}</div>
-                                                        <div className='price'>
-                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
+                                                        <div
+                                                            className="text"
+                                                            title={
+                                                                item.mainText
+                                                            }
+                                                        >
+                                                            {item.mainText}
                                                         </div>
-                                                        <div className='rating'>
-                                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
-                                                            <span>Đã bán {item.sold}</span>
+                                                        <div className="price">
+                                                            {new Intl.NumberFormat(
+                                                                "vi-VN",
+                                                                {
+                                                                    style: "currency",
+                                                                    currency:
+                                                                        "VND",
+                                                                }
+                                                            ).format(
+                                                                item?.price ?? 0
+                                                            )}
+                                                        </div>
+                                                        <div className="rating">
+                                                            <Rate
+                                                                value={5}
+                                                                disabled
+                                                                style={{
+                                                                    color: "#ffce3d",
+                                                                    fontSize: 10,
+                                                                }}
+                                                            />
+                                                            <span>
+                                                                Đã bán{" "}
+                                                                {item.sold}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            )
+                                            );
                                         })}
 
-                                        {listBook.length === 0 &&
-                                            <div style={{ width: "100%", margin: "0 auto" }}>
-                                                <Empty
-                                                    description="Không có dữ liệu"
-                                                />
+                                        {listBook.length === 0 && (
+                                            <div
+                                                style={{
+                                                    width: "100%",
+                                                    margin: "0 auto",
+                                                }}
+                                            >
+                                                <Empty description="Không có dữ liệu" />
                                             </div>
-
-                                        }
+                                        )}
                                     </Row>
                                     <div style={{ marginTop: 30 }}></div>
-                                    <Row style={{ display: "flex", justifyContent: "center" }}>
+                                    <Row
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                        }}
+                                    >
                                         <Pagination
                                             current={current}
                                             total={total}
                                             pageSize={pageSize}
                                             responsive
-                                            onChange={(p, s) => handleOnchangePage({ current: p, pageSize: s })}
+                                            onChange={(p, s) =>
+                                                handleOnchangePage({
+                                                    current: p,
+                                                    pageSize: s,
+                                                })
+                                            }
                                         />
                                     </Row>
                                 </div>
@@ -375,7 +506,7 @@ const Home = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
 export default Home;
