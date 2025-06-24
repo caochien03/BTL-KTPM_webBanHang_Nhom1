@@ -62,22 +62,31 @@ const Home = () => {
 
     const fetchBook = async () => {
         setIsLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}`;
-        if (filter) {
-            query += `&${filter}`;
-        }
-        if (sortQuery) {
-            query += `&${sortQuery}`;
-        }
+        try {
+            let query = `current=${current}&pageSize=${pageSize}`;
+            if (filter) {
+                query += `&${filter}`;
+            }
+            if (sortQuery) {
+                query += `&${sortQuery}`;
+            }
 
-        if (searchTerm) {
-            query += `&mainText=/${searchTerm}/i`;
-        }
+            if (searchTerm) {
+                query += `&mainText=/${searchTerm}/i`;
+            }
 
-        const res = await callFetchListBook(query);
-        if (res && res.data) {
-            setListBook(res.data.result);
-            setTotal(res.data.meta.total);
+            const res = await callFetchListBook(query);
+            if (res && res.data) {
+                setListBook(res.data.result || []);
+                setTotal(res.data.meta?.total || 0);
+            } else {
+                setListBook([]);
+                setTotal(0);
+            }
+        } catch (error) {
+            console.error('Error fetching books:', error);
+            setListBook([]);
+            setTotal(0);
         }
         setIsLoading(false);
     };
@@ -416,7 +425,7 @@ const Home = () => {
                                                                     import.meta
                                                                         .env
                                                                         .VITE_BACKEND_URL
-                                                                }/images/book/${
+                                                                }${
                                                                     item.thumbnail
                                                                 }`}
                                                                 alt="thumbnail book"

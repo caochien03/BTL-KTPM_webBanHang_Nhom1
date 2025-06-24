@@ -26,7 +26,7 @@ const BookViewDetail = (props) => {
                     uid: uuidv4(),
                     name: dataViewDetail.thumbnail,
                     status: 'done',
-                    url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${dataViewDetail.thumbnail}`,
+                    url: `${import.meta.env.VITE_BACKEND_URL}${dataViewDetail.thumbnail}`,
                 }
             }
             if (dataViewDetail.slider && dataViewDetail.slider.length > 0) {
@@ -35,7 +35,7 @@ const BookViewDetail = (props) => {
                         uid: uuidv4(),
                         name: item,
                         status: 'done',
-                        url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${item}`,
+                        url: `${import.meta.env.VITE_BACKEND_URL}${item}`,
                     })
                 })
             }

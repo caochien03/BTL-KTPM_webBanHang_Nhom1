@@ -46,7 +46,7 @@ const UserTable = () => {
         }
 
         const res = await callFetchListUser(query);
-        if (res && res.data) {
+        if (res && res.data && res.data.result) {
             setListUser(res.data.result);
             setTotal(res.data.meta.total)
         }
@@ -141,7 +141,7 @@ const UserTable = () => {
 
     const handleDeleteUser = async (userId) => {
         const res = await callDeleteUser(userId);
-        if (res && res.data) {
+        if (res && res.success) {
             message.success('Xóa user thành công');
             fetchUser();
         } else {

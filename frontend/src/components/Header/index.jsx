@@ -82,7 +82,7 @@ const Header = (props) => {
                                 <img
                                     src={`${
                                         import.meta.env.VITE_BACKEND_URL
-                                    }/images/book/${book?.detail?.thumbnail}`}
+                                    }${book?.detail?.thumbnail}`}
                                 />
                                 <div>{book?.detail?.mainText}</div>
                                 <div className="price">

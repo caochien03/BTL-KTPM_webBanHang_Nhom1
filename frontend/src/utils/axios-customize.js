@@ -13,15 +13,18 @@ const instance = axios.create({
 instance.defaults.headers.common = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
 
 const handleRefreshToken = async () => {
-    // const res = await instance.get('/api/v1/auth/refresh');
-    // if (res && res.data) return res.data.access_token;
-    // else null;
-
-    return await mutex.runExclusive(async () => {
-        const res = await instance.get('/api/v1/auth/refresh');
-        if (res && res.data) return res.data.access_token;
-        else return null;
-    });
+    try {
+        return await mutex.runExclusive(async () => {
+            const res = await instance.get('/api/v1/auth/refresh');
+            if (res && res.data && res.data.access_token) {
+                return res.data.access_token;
+            }
+            return null;
+        });
+    } catch (error) {
+        // Refresh token failed, return null
+        return null;
+    }
 }
 
 
@@ -47,9 +50,15 @@ instance.interceptors.response.use(function (response) {
 }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
+    
+    // Only try refresh token if we actually have a token and it's not a refresh request
+    const hasToken = window.localStorage && window.localStorage.getItem('access_token');
+    
     if (error.config && error.response
         && +error.response.status === 401
         && !error.config.headers[NO_RETRY_HEADER]
+        && hasToken
+        && error.config.url !== '/api/v1/auth/refresh'
     ) {
         const access_token = await handleRefreshToken();
         error.config.headers[NO_RETRY_HEADER] = 'true'

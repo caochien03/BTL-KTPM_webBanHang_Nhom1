@@ -14,7 +14,7 @@ const UserModalUpdate = (props) => {
         const { fullName, _id, phone } = values;
         setIsSubmit(true)
         const res = await callUpdateUser(_id, fullName, phone);
-        if (res && res.data) {
+        if (res && res.success) {
             message.success('Cập nhật user thành công');
             setOpenModalUpdate(false);
             await props.fetchUser()
