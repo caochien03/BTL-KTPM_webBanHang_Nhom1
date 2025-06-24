@@ -32,7 +32,7 @@ const MangeOrder = () => {
         }
 
         const res = await callFetchListOrder(query);
-        if (res && res.data) {
+        if (res && res.data && res.data.result) {
             setListOrder(res.data.result);
             setTotal(res.data.meta.total)
         }

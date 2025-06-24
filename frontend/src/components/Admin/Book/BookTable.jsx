@@ -42,7 +42,7 @@ const BookTable = () => {
         }
 
         const res = await callFetchListBook(query);
-        if (res && res.data) {
+        if (res && res.data && res.data.result) {
             setListBook(res.data.result);
             setTotal(res.data.meta.total)
         }
@@ -149,7 +149,7 @@ const BookTable = () => {
 
     const handleDeleteBook = async (id) => {
         const res = await callDeleteBook(id);
-        if (res && res.data) {
+        if (res && res.success) {
             message.success('Xóa book thành công');
             fetchBook();
         } else {

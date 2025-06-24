@@ -30,8 +30,8 @@ const Payment = (props) => {
     }, [carts]);
 
 
-    const handlePlaceOrder = () => {
-        if (!address) {
+    const handlePlaceOrder = (values) => {
+        if (!values?.address) {
             notification.error({
                 message: "Đã có lỗi xảy ra",
                 description: "Thông tin địa chỉ không được để trống!"
@@ -59,14 +59,17 @@ const Payment = (props) => {
         }
 
         const res = await callPlaceOrder(data);
-        if (res && res.data) {
+        console.log('Order response:', res);
+        
+        if (res && res.success && res.data?._id) {
             message.success('Đặt hàng thành công !');
             dispatch(doPlaceOrderAction());
             props.setCurrentStep(2);
         } else {
+            console.error('Order failed:', res);
             notification.error({
                 message: "Đã có lỗi xảy ra",
-                description: res.message
+                description: res?.message || "Có lỗi xảy ra khi đặt hàng"
             })
         }
         setIsSubmit(false);
@@ -80,7 +83,7 @@ const Payment = (props) => {
                     return (
                         <div className='order-book' key={`index-${index}`}>
                             <div className='book-content'>
-                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${book?.detail?.thumbnail}`} />
+                                <img src={`${import.meta.env.VITE_BACKEND_URL}${book?.detail?.thumbnail}`} />
                                 <div className='title'>
                                     {book?.detail?.mainText}
                                 </div>

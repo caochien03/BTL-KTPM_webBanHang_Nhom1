@@ -46,7 +46,7 @@ const BookModalUpdate = (props) => {
                     uid: uuidv4(),
                     name: dataUpdate.thumbnail,
                     status: 'done',
-                    url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${dataUpdate.thumbnail}`,
+                    url: `${import.meta.env.VITE_BACKEND_URL}${dataUpdate.thumbnail}`,
                 }
             ]
 
@@ -55,7 +55,7 @@ const BookModalUpdate = (props) => {
                     uid: uuidv4(),
                     name: item,
                     status: 'done',
-                    url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${item}`,
+                    url: `${import.meta.env.VITE_BACKEND_URL}${item}`,
                 }
             })
 
@@ -105,7 +105,7 @@ const BookModalUpdate = (props) => {
 
         setIsSubmit(true)
         const res = await callUpdateBook(_id, thumbnail, slider, mainText, author, price, sold, quantity, category);
-        if (res && res.data) {
+        if (res && res.success) {
             message.success('Cập nhật book thành công');
             form.resetFields();
             setDataSlider([]);

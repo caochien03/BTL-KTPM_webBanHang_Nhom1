@@ -10,7 +10,8 @@ const History = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             const res = await callOrderHistory();
-            if (res && res.data) {
+            console.log('History response:', res);
+            if (res && res.success && res.data) {
                 setOrderHistory(res.data);
             }
         }
@@ -25,6 +26,11 @@ const History = () => {
             render: (item, record, index) => (<>{index + 1}</>)
         },
         {
+            title: 'Mã đơn hàng',
+            dataIndex: 'orderNumber',
+            key: 'orderNumber',
+        },
+        {
             title: 'Thời gian ',
             dataIndex: 'createdAt',
             render: (item, record, index) => {
@@ -33,27 +39,38 @@ const History = () => {
         },
         {
             title: 'Tổng số tiền',
-            dataIndex: 'totalPrice',
+            dataIndex: 'totalAmount',
             render: (item, record, index) => {
                 return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item)
             }
         },
         {
             title: 'Trạng thái',
-            render: (_, { tags }) => (
-
-                <Tag color={"green"}>
-                    Thành công
-                </Tag>
-            )
+            dataIndex: 'orderStatus',
+            render: (status) => {
+                const statusConfig = {
+                    'pending': { color: 'orange', text: 'Chờ xử lý' },
+                    'confirmed': { color: 'blue', text: 'Đã xác nhận' },
+                    'processing': { color: 'purple', text: 'Đang xử lý' },
+                    'shipped': { color: 'cyan', text: 'Đang giao' },
+                    'delivered': { color: 'green', text: 'Đã giao' },
+                    'cancelled': { color: 'red', text: 'Đã hủy' }
+                };
+                const config = statusConfig[status] || { color: 'default', text: status };
+                return (
+                    <Tag color={config.color}>
+                        {config.text}
+                    </Tag>
+                );
+            }
         },
         {
             title: 'Chi tiết',
             key: 'action',
             render: (_, record) => (
                 <ReactJson
-                    src={record.detail}
-                    name={"Chi tiết đơn mua"}
+                    src={record.items}
+                    name={"Chi tiết đơn hàng"}
                     collapsed={true}
                     enableClipboard={false}
                     displayDataTypes={false}
@@ -67,7 +84,12 @@ const History = () => {
     return (
         <div >
             <div style={{ margin: "15px 0" }}>Lịch sử đặt hàng:</div>
-            <Table columns={columns} dataSource={orderHistory} pagination={false} />
+            <Table 
+                columns={columns} 
+                dataSource={orderHistory} 
+                pagination={false} 
+                rowKey="_id"
+            />
         </div>
     )
 }
